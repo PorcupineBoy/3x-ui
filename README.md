@@ -1,7 +1,8 @@
 [English](/README.md) | [فارسی](/README.fa_IR.md) | [中文](/README.zh_CN.md) | [Español](/README.es_ES.md) | [Русский](/README.ru_RU.md)
 
 <p align="center">
-  <picture>
+  <
+picture>
     <source media="(prefers-color-scheme: dark)" srcset="./media/3x-ui-dark.png">
     <img alt="3x-ui" src="./media/3x-ui-light.png">
   </picture>
@@ -233,21 +234,59 @@ location / {
 }
 ```
 
-#### Nginx sub-path
+#### Nginx 
 - Ensure that the "URI Path" in the `/sub` panel settings is the same.
 - The `url` in the panel settings needs to end with `/`.   
+```
+cd /etc/nginx/conf.d
+vi nginx-v2ray.conf
+   ```
+```nginx-v2ray.conf
+server {
+        listen 80;
+        server_name localhost;
+location / {
+                proxy_redirect off;
+                proxy_read_timeout 1200s;
+                proxy_pass http://127.0.0.1:2053;
+                proxy_http_version 1.1;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Host $http_host;
+                proxy_set_header Early-Data $ssl_early_data;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;       
+ }
 
-```nginx
-location /sub {
+location /sub/ {
+    proxy_http_version 1.1;  
+    proxy_set_header Upgrade $http_upgrade;  
+    proxy_set_header Connection "upgrade";  
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header Host $http_host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header Range $http_range;
-    proxy_set_header If-Range $http_if_range; 
+    proxy_set_header If-Range $http_if_range;
     proxy_redirect off;
-    proxy_pass http://127.0.0.1:2053;
+    proxy_pass http://127.0.0.1:62789;
 }
+
+location ~ ^/api(/|$) {  
+        proxy_pass http://127.0.0.1:1234;  
+        proxy_http_version 1.1;  
+        proxy_set_header Upgrade $http_upgrade;  
+        proxy_set_header Connection "upgrade";  
+        proxy_set_header Host $http_host;  # 显式指定 Host  
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;  
+        proxy_set_header X-Forwarded-Proto "ws";  # 声明协议  
+        proxy_set_header X-Real-IP $remote_addr;  
+        proxy_redirect off;  
+    }  
+}
+
 ```
 </details>
 
