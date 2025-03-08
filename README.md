@@ -168,6 +168,7 @@ systemctl restart x-ui
    ```sh
    git clone https://github.com/MHSanaei/3x-ui.git
    cd 3x-ui
+   sudo systemctl start docker
    ```
 
 3. **Start the Service:**
@@ -216,6 +217,9 @@ systemctl restart x-ui
   <summary>Click for Reverse Proxy Configuration</summary>
 
 #### Nginx Reverse Proxy
+```sh
+   nginx
+   ```
 ```nginx
 location / {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
